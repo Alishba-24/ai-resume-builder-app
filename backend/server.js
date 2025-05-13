@@ -20,7 +20,10 @@ const corsOptions = {
 
 // Simple health check endpoint
 app.get('/', (req, res) => {
-    res.send('API is working');
+    res.send({
+        activeSttaus: true,
+        error: false,
+    });
 });
 
 // Database connection
