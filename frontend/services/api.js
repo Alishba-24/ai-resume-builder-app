@@ -2,17 +2,17 @@ import axios from 'axios';
 
 
   const API = axios.create({
-    baseURL: import.meta.env.VITE_SERVER_URL || 'http://localhost:5000/api/v1' ,  
+    baseURL: import.meta.env.VITE_SERVER_URL || 'http://localhost:5000' ,  
   });
 
 // Register user
 export const registerUser = (userData) => {
-  return API.post('/auth/register', userData);  
+  return API.post('/api/v1/auth/register', userData);  
 };
 
 // Login user and receive JWT token
 export const loginUser = async (credentials) => {
-  const response = await API.post('/auth/login', credentials); 
+  const response = await API.post('/api/v1/auth/login', credentials); 
   return response.data;  
 };
 
@@ -20,7 +20,7 @@ export const loginUser = async (credentials) => {
 export const updateUserProfile = async (token, updatedData) => {
   try {
     // Make sure to pass correct user ID, name, and email
-    const response = await API.put(`/users/${updatedData.id}`, updatedData, {
+    const response = await API.put(`/api/v1/users/${updatedData.id}`, updatedData, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
@@ -34,7 +34,7 @@ export const updateUserProfile = async (token, updatedData) => {
 // Get user profile
 export const getUserProfile = async (token) => {
   try {
-    const response = await API.get('/users/profile/me', {
+    const response = await API.get('/api/v1/users/profile/me', {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
@@ -47,7 +47,7 @@ export const getUserProfile = async (token) => {
 // Delete user account
 export const deleteUserAccount = async (token, userId) => {
   try {
-    const response = await API.delete(`/users/${userId}`, {
+    const response = await API.delete(`/api/v1/users/${userId}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
@@ -65,7 +65,7 @@ export const deleteUserAccount = async (token, userId) => {
 // Get the resume by user ID
 
 export const getResumeById = async (resumeId, token) => {
-  return await API.get(`/resumes/${resumeId}`, {
+  return await API.get(`/api/v1/resumes/${resumeId}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 };
@@ -74,7 +74,7 @@ export const getResumeById = async (resumeId, token) => {
 
 // Delete a resume
 export const deleteResume = async (resumeId, token) => {
-  const response = await API.delete(`/resumes/${resumeId}`, {
+  const response = await API.delete(`/api/v1/resumes/${resumeId}`, {
     headers: { Authorization: `Bearer ${token}` },  
   });
   return response.data;  
@@ -82,7 +82,7 @@ export const deleteResume = async (resumeId, token) => {
 
 // Fetch all resumes (admin use)
 export const getAllResumes = async (token) => {
-  const response = await API.get('/resumes', {
+  const response = await API.get('/api/v1/resumes', {
     headers: { Authorization: `Bearer ${token}` },
   });
   return response.data;  
@@ -91,7 +91,7 @@ export const getAllResumes = async (token) => {
 
 
 export const getResumeDetail = async (resumeId, token) => {
-  const response = await fetch(`${API_BASE_URL}/resumes/${resumeId}`, {
+  const response = await fetch(`${API_BASE_URL}/api/v1/resumes/${resumeId}`, {
     method: 'GET',
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -109,7 +109,7 @@ export const getResumeDetail = async (resumeId, token) => {
 
 // Update resume
 export const updateResume = async (resumeId, payload, token) => {
-  const response = await API.put(`/resumes/${resumeId}`, payload, {
+  const response = await API.put(`/api/v1/resumes/${resumeId}`, payload, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -124,14 +124,14 @@ export const createOrUpdateResume = async (token, resumeData, resumeId = null) =
     let response;
     if (resumeId) {
       // If a resumeId exists, update the resume
-      response = await API.put(`/resumes/${resumeId}`, resumeData, {
+      response = await API.put(`/api/v1/resumes/${resumeId}`, resumeData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
     } else {
       // Otherwise, create a new resume
-      response = await API.post('/resumes', resumeData, {
+      response = await API.post('/api/v1/resumes', resumeData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -146,7 +146,7 @@ export const createOrUpdateResume = async (token, resumeData, resumeId = null) =
 
 // Generate AI-based Resume Summary
 export const generateAISummary = async (jobTitle, token) => {
-  const response = await API.post('/ai/generate-summary', { jobTitle }, {
+  const response = await API.post('/api/v1/ai/generate-summary', { jobTitle }, {
     headers: { Authorization: `Bearer ${token}` },
   });
   return response.data;  // { success: true, generatedSummary: "..." }
@@ -154,7 +154,7 @@ export const generateAISummary = async (jobTitle, token) => {
 
 // Suggest AI-based Skills
 export const suggestAISkills = async (jobTitle, token) => {
-  const response = await API.post('/ai/suggest-skills', { jobTitle }, {
+  const response = await API.post('/api/v1/ai/suggest-skills', { jobTitle }, {
     headers: { Authorization: `Bearer ${token}` },
   });
   return response.data; 
@@ -164,7 +164,7 @@ export const suggestAISkills = async (jobTitle, token) => {
 export const createCheckoutSession = (template_id) => {
   const token = localStorage.getItem("token"); 
   return API.post(
-    "/payment/create-checkout-session",
+    "/api/v1/payment/create-checkout-session",
     { template_id },
     {
       headers: {
@@ -176,7 +176,7 @@ export const createCheckoutSession = (template_id) => {
 
 
   export const verifyPayment = (session_id, token) => {
-  return API.get(`/payment/verify-payment?session_id=${session_id}`, {
+  return API.get(`/api/v1/payment/verify-payment?session_id=${session_id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -184,7 +184,7 @@ export const createCheckoutSession = (template_id) => {
 };
 
 export const checkIfUserAlreadyPaid = (token) => {
-  return API.get("/payment/check-user-paid", {
+  return API.get("/api/v1/payment/check-user-paid", {
     headers: {
       Authorization: `Bearer ${token}`,
     },
